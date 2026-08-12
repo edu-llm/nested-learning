@@ -60,10 +60,10 @@ Use the current prepared branch:
 export BRANCH=edullm/nested-learning-block-12h
 ```
 
-Set `REPOSITORY` to the public GitHub repository after you create/push it:
+Use the public GitHub repository:
 
 ```bash
-export REPOSITORY=owner/repo
+export REPOSITORY=edu-llm/nested-learning
 ```
 
 ## Block Workflow Map
@@ -146,16 +146,16 @@ Do not use `take_the_node_anyway`.
 First print the exact GitHub CLI commands:
 
 ```bash
-REPOSITORY=owner/repo \
-BRANCH=your-pushed-branch \
+REPOSITORY=edu-llm/nested-learning \
+BRANCH=edullm/nested-learning-block-12h \
 bash scripts/dispatch_block_12h_runs.sh
 ```
 
 After checking the output, dispatch:
 
 ```bash
-REPOSITORY=owner/repo \
-BRANCH=your-pushed-branch \
+REPOSITORY=edu-llm/nested-learning \
+BRANCH=edullm/nested-learning-block-12h \
 EXECUTE=1 \
 bash scripts/dispatch_block_12h_runs.sh
 ```

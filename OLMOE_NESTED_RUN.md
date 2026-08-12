@@ -138,7 +138,7 @@ ablations. See `GITHUB_BLOCK_12H_RUN.md` for the exact `Block:` workflow inputs,
 including the print-only dispatch helper:
 
 ```bash
-REPOSITORY=owner/repo BRANCH=edullm/nested-learning-block-12h bash scripts/dispatch_block_12h_runs.sh
+REPOSITORY=edu-llm/nested-learning BRANCH=edullm/nested-learning-block-12h bash scripts/dispatch_block_12h_runs.sh
 ```
 
 ## Important Caveats

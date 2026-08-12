@@ -14,7 +14,7 @@ if [[ ! -f "${PLAN}" ]]; then
 fi
 
 if [[ -z "${REPOSITORY:-}" ]]; then
-  echo "Set REPOSITORY to the public GitHub repo containing this experiment, e.g. REPOSITORY=owner/repo" >&2
+  echo "Set REPOSITORY to the public GitHub repo containing this experiment, e.g. REPOSITORY=edu-llm/nested-learning" >&2
   exit 2
 fi
 

@@ -14,7 +14,7 @@ python3 scripts/make_block_12h_configs.py
 Print the `edu-llm/platform` Block dispatch commands:
 
 ```bash
-REPOSITORY=owner/repo BRANCH=edullm/nested-learning-block-12h bash scripts/dispatch_block_12h_runs.sh
+REPOSITORY=edu-llm/nested-learning BRANCH=edullm/nested-learning-block-12h bash scripts/dispatch_block_12h_runs.sh
 ```
 
 See `GITHUB_BLOCK_12H_RUN.md` for the full launch, status, logs, drain, and release runbook.
@@ -44,4 +44,3 @@ The repository includes:
 - `.github/workflows/build-research-image.yml` calling the platform reusable image workflow.
 
 See `PLATFORM_REPO_SETUP.md` for registration and push notes.
-

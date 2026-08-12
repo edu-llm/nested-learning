@@ -38,13 +38,13 @@ OLMo-core image, clones this branch to `/work`, and runs either the command fiel
 Recommended dispatch path:
 
 ```bash
-REPOSITORY=owner/repo BRANCH=edullm/nested-learning-block-12h bash scripts/dispatch_block_12h_runs.sh
+REPOSITORY=edu-llm/nested-learning BRANCH=edullm/nested-learning-block-12h bash scripts/dispatch_block_12h_runs.sh
 ```
 
 After checking the printed commands and confirming the nodes are free:
 
 ```bash
-REPOSITORY=owner/repo BRANCH=edullm/nested-learning-block-12h EXECUTE=1 bash scripts/dispatch_block_12h_runs.sh
+REPOSITORY=edu-llm/nested-learning BRANCH=edullm/nested-learning-block-12h EXECUTE=1 bash scripts/dispatch_block_12h_runs.sh
 ```
 
 The helper uses `processes=1` because `scripts/run_block_12h_variant.sh` starts
@@ -74,11 +74,10 @@ Once the repo has an `origin`, start the platform registration PR with:
 
 ```bash
 edullm add repository \
-  --repository owner/repo \
+  --repository nested-learning \
   --dockerfile .edullm/Dockerfile \
   --reason "Nested Learning OLMoE/CMS architecture experiments on official MoE base models."
 ```
 
 That command prepares a reviewed configuration change in `edu-llm/platform`; it does not
 launch a run.
-
