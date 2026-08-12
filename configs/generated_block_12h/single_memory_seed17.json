@@ -63,6 +63,7 @@
     "mixed_precision": "bf16",
     "gradient_checkpointing": true,
     "num_workers": 4,
-    "ddp_find_unused_parameters": true
+    "ddp_find_unused_parameters": true,
+    "gradient_checkpointing_use_reentrant": false
   }
 }

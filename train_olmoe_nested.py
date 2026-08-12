@@ -58,7 +58,23 @@ def main() -> None:
     model = AutoModelForCausalLM.from_pretrained(cfg["model"]["name"], **model_kwargs)
     model.config.use_cache = False
     if cfg["train"].get("gradient_checkpointing", True):
-        model.gradient_checkpointing_enable()
+        checkpoint_kwargs = {
+            "use_reentrant": bool(cfg["train"].get("gradient_checkpointing_use_reentrant", False))
+        }
+        try:
+            model.gradient_checkpointing_enable(gradient_checkpointing_kwargs=checkpoint_kwargs)
+        except TypeError:
+            if checkpoint_kwargs["use_reentrant"]:
+                model.gradient_checkpointing_enable()
+            elif accelerator.is_main_process:
+                print(
+                    json.dumps(
+                        {
+                            "warning": "gradient_checkpointing_disabled",
+                            "reason": "non_reentrant_checkpointing_not_supported",
+                        }
+                    )
+                )
 
     adapter_cfg = cfg["adapter"]
     if adapter_cfg["mode"] != "none":
