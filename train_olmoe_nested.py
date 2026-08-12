@@ -35,7 +35,7 @@ def main() -> None:
     ddp_options = {
         "find_unused_parameters": bool(cfg["train"].get("ddp_find_unused_parameters", True))
     }
-    if bool(cfg["train"].get("ddp_static_graph", True)):
+    if bool(cfg["train"].get("ddp_static_graph", False)):
         ddp_options["static_graph"] = True
     try:
         ddp_kwargs = DistributedDataParallelKwargs(**ddp_options)
