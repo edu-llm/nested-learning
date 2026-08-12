@@ -140,6 +140,53 @@ region: us-east-2
 Only proceed if nodes `1-8` are free or explicitly assigned to this experiment.
 Do not use `take_the_node_anyway`.
 
+## Smoke Test First
+
+Mirror the safe path from the earlier block run: claim one free node, run a tiny
+two-step CMS job, read the log, and release the node after the container exits.
+This verifies the public branch, dependency install, OLMoE load, adapter
+injection, synthetic episodic data path, evaluation path, and block output sync
+before occupying the whole fleet.
+
+First print the exact dispatch command:
+
+```bash
+NODE=5 \
+REPOSITORY=edu-llm/nested-learning \
+BRANCH=edullm/nested-learning-block-12h \
+bash scripts/dispatch_block_smoke.sh
+```
+
+After checking that node is free, dispatch the smoke:
+
+```bash
+NODE=5 \
+REPOSITORY=edu-llm/nested-learning \
+BRANCH=edullm/nested-learning-block-12h \
+EXECUTE=1 \
+bash scripts/dispatch_block_smoke.sh
+```
+
+The smoke command generated on the node is:
+
+```bash
+bash -lc 'python3 scripts/make_block_12h_configs.py --out-dir configs/generated_block_smoke --max-steps 2 --eval-every 1 --eval-size 2 --max-length 512 --gradient-accumulation-steps 1 --rank 16 && bash scripts/run_block_12h_variant.sh configs/generated_block_smoke/cms_seed17.json'
+```
+
+Use a unique `RUN_NAME` if re-running, for example:
+
+```bash
+RUN_NAME=nl-smoke-20260812-0600
+```
+
+After the smoke run exits, release only that node:
+
+```text
+Block: give a node back
+nodes: 5
+region: us-east-2
+```
+
 ## Dispatch The Eight Runs
 
 First print the exact GitHub CLI commands:
