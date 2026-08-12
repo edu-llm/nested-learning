@@ -192,12 +192,9 @@ def main() -> None:
         )
     else:
         raise ValueError(f"unsupported optimizer: {optimizer_name}")
+    model, optimizer, train_loader = accelerator.prepare(model, optimizer, train_loader)
     warmup_steps = int(cfg["train"].get("warmup_steps", max(1, max_steps // 20)))
     lr_scheduler = get_cosine_schedule_with_warmup(optimizer, warmup_steps, max_steps)
-
-    model, optimizer, train_loader, lr_scheduler = accelerator.prepare(
-        model, optimizer, train_loader, lr_scheduler
-    )
 
     accumulation_steps = max(1, int(cfg["train"]["gradient_accumulation_steps"]))
     completed_steps = 0
