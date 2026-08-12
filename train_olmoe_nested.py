@@ -32,9 +32,16 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     set_seed(int(cfg["run"]["seed"]))
-    ddp_kwargs = DistributedDataParallelKwargs(
-        find_unused_parameters=bool(cfg["train"].get("ddp_find_unused_parameters", True))
-    )
+    ddp_options = {
+        "find_unused_parameters": bool(cfg["train"].get("ddp_find_unused_parameters", True))
+    }
+    if bool(cfg["train"].get("ddp_static_graph", True)):
+        ddp_options["static_graph"] = True
+    try:
+        ddp_kwargs = DistributedDataParallelKwargs(**ddp_options)
+    except TypeError:
+        ddp_options.pop("static_graph", None)
+        ddp_kwargs = DistributedDataParallelKwargs(**ddp_options)
     accelerator = Accelerator(
         gradient_accumulation_steps=int(cfg["train"]["gradient_accumulation_steps"]),
         mixed_precision=cfg["train"].get("mixed_precision", "bf16"),
