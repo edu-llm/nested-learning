@@ -1,0 +1,8 @@
+configs/generated_block_12h/base_eval_seed17.json
+configs/generated_block_12h/static_adapter_seed17.json
+configs/generated_block_12h/single_memory_seed17.json
+configs/generated_block_12h/cms_seed17.json
+configs/generated_block_12h/cms_no_dgd_seed17.json
+configs/generated_block_12h/cms_no_momentum_seed17.json
+configs/generated_block_12h/cms_no_retention_seed17.json
+configs/generated_block_12h/cms_no_self_reference_seed17.json

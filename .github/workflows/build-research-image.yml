@@ -1,0 +1,25 @@
+name: Build eduLLM research image
+
+on:
+  push:
+    branches:
+      - "edullm/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish research image
+    permissions:
+      contents: read
+      id-token: write
+    uses: edu-llm/platform/.github/workflows/build-research-image.yml@main
+    with:
+      repository: nested-learning
+      publisher_role_arn: ${{ vars.AWS_ECR_PUBLISHER_ROLE_ARN }}
+      test_command: >-
+        python3 -m py_compile train_olmoe_nested.py nested_olmoe/*.py
+        scripts/make_block_12h_configs.py scripts/compare_nested_results.py
+

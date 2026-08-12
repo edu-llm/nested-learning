@@ -1,0 +1,10 @@
+# Default command for the capacity-block workflow when its command field is left empty.
+# The normal eduLLM platform also reads this file, but this repository must be registered
+# in edu-llm/platform before `edullm submit` can use it.
+schema_version: 1
+workload_profile: nested-learning-train
+suggested_compute: gpu-8xa100
+command: >-
+  bash -lc 'python3 scripts/make_block_12h_configs.py &&
+  bash scripts/run_block_12h_variant.sh configs/generated_block_12h/cms_seed17.json'
+

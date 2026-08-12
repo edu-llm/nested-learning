@@ -1,0 +1,71 @@
+{
+  "run": {
+    "output_dir": "results/paper_cms_seed17",
+    "seed": 17,
+    "log_every": 10,
+    "eval_every": 250
+  },
+  "model": {
+    "name": "allenai/OLMoE-1B-7B-0125",
+    "attn_implementation": "sdpa"
+  },
+  "adapter": {
+    "mode": "cms",
+    "target_pattern": "^model\\.layers\\.\\d+\\.mlp$",
+    "first_layer": 8,
+    "last_layer": null,
+    "rank": 256,
+    "chunk_sizes": [
+      128,
+      512,
+      2048
+    ],
+    "learning_rates": [
+      0.3,
+      0.12,
+      0.035
+    ],
+    "dropout": 0.0,
+    "output_scale": 0.05,
+    "memory_update_rule": "delta",
+    "retention_factor": 0.995,
+    "update_momentum": 0.5,
+    "self_reference_scale": 0.1,
+    "detach_memory_updates": true,
+    "aux_loss_weight": 0.05
+  },
+  "data": {
+    "seed": 1000,
+    "eval_seed": 900000,
+    "train_size": 200000,
+    "eval_size": 256,
+    "max_length": 4096,
+    "num_facts": 64,
+    "train_suites": [
+      "facts",
+      "needle",
+      "language"
+    ],
+    "include_needle_eval": true,
+    "include_language_eval": true,
+    "include_guardrail_ppl": true
+  },
+  "train": {
+    "optimizer": "adamw",
+    "train_base": false,
+    "per_device_batch_size": 1,
+    "gradient_accumulation_steps": 16,
+    "max_steps": 10000,
+    "learning_rate": 0.00015,
+    "warmup_steps": 500,
+    "weight_decay": 0.01,
+    "betas": [
+      0.9,
+      0.95
+    ],
+    "max_grad_norm": 1.0,
+    "mixed_precision": "bf16",
+    "gradient_checkpointing": true,
+    "num_workers": 4
+  }
+}
