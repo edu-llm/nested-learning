@@ -64,7 +64,7 @@
     "gradient_checkpointing": true,
     "num_workers": 0,
     "ddp_find_unused_parameters": true,
-    "ddp_static_graph": false,
+    "ddp_static_graph": true,
     "gradient_checkpointing_use_reentrant": false
   }
 }

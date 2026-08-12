@@ -35,7 +35,7 @@ def main() -> None:
     ddp_options = {
         "find_unused_parameters": bool(cfg["train"].get("ddp_find_unused_parameters", True))
     }
-    if bool(cfg["train"].get("ddp_static_graph", False)):
+    if bool(cfg["train"].get("ddp_static_graph", True)):
         ddp_options["static_graph"] = True
     try:
         ddp_kwargs = DistributedDataParallelKwargs(**ddp_options)
@@ -43,7 +43,7 @@ def main() -> None:
         ddp_options.pop("static_graph", None)
         ddp_kwargs = DistributedDataParallelKwargs(**ddp_options)
     accelerator = Accelerator(
-        gradient_accumulation_steps=int(cfg["train"]["gradient_accumulation_steps"]),
+        gradient_accumulation_steps=1,
         mixed_precision=cfg["train"].get("mixed_precision", "bf16"),
         log_with=None,
         kwargs_handlers=[ddp_kwargs],
@@ -199,32 +199,36 @@ def main() -> None:
         model, optimizer, train_loader, lr_scheduler
     )
 
+    accumulation_steps = max(1, int(cfg["train"]["gradient_accumulation_steps"]))
     completed_steps = 0
+    micro_steps = 0
     model.train()
+    optimizer.zero_grad(set_to_none=True)
     while completed_steps < max_steps:
         for batch in train_loader:
             batch.pop("is_volatile", None)
-            with accelerator.accumulate(model):
-                outputs = model(**batch, use_cache=False)
-                loss = outputs.loss
-                cms_aux_loss = collect_cms_aux_loss(accelerator.unwrap_model(model))
-                if cms_aux_loss is not None:
-                    loss = loss + float(adapter_cfg.get("aux_loss_weight", 0.05)) * cms_aux_loss
-                accelerator.backward(loss)
-                if accelerator.sync_gradients:
-                    accelerator.clip_grad_norm_(model.parameters(), float(cfg["train"].get("max_grad_norm", 1.0)))
+            outputs = model(**batch, use_cache=False)
+            loss = outputs.loss
+            cms_aux_loss = collect_cms_aux_loss(accelerator.unwrap_model(model))
+            if cms_aux_loss is not None:
+                loss = loss + float(adapter_cfg.get("aux_loss_weight", 0.05)) * cms_aux_loss
+            unscaled_loss = loss.detach()
+            accelerator.backward(loss / accumulation_steps)
+            micro_steps += 1
+
+            if micro_steps % accumulation_steps == 0:
+                accelerator.clip_grad_norm_(model.parameters(), float(cfg["train"].get("max_grad_norm", 1.0)))
                 optimizer.step()
                 lr_scheduler.step()
                 optimizer.zero_grad(set_to_none=True)
 
-            if accelerator.sync_gradients:
                 completed_steps += 1
                 if accelerator.is_main_process and completed_steps % int(cfg["run"].get("log_every", 10)) == 0:
                     print(
                         json.dumps(
                             {
                                 "step": completed_steps,
-                                "loss": float(accelerator.gather(loss.detach()).mean().cpu()),
+                                "loss": float(accelerator.gather(unscaled_loss).mean().cpu()),
                                 "lr": lr_scheduler.get_last_lr()[0],
                             }
                         )
