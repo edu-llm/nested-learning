@@ -193,10 +193,10 @@ class EpisodicFactsDataset(Dataset):
         prompt_ids = self.tokenizer(example.prompt, add_special_tokens=True).input_ids
         answer_ids = self.tokenizer(example.answer, add_special_tokens=False).input_ids
         eos = [self.tokenizer.eos_token_id] if self.tokenizer.eos_token_id is not None else []
-        input_ids = (prompt_ids + answer_ids + eos)[-self.max_length :]
-        prompt_len = min(len(prompt_ids), len(input_ids))
-        labels = [-100] * prompt_len + input_ids[prompt_len:]
-        labels = labels[: len(input_ids)]
+        full_input_ids = prompt_ids + answer_ids + eos
+        full_labels = [-100] * len(prompt_ids) + answer_ids + eos
+        input_ids = full_input_ids[-self.max_length :]
+        labels = full_labels[-self.max_length :]
         return {
             "input_ids": input_ids,
             "labels": labels,
