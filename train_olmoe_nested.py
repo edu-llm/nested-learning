@@ -223,16 +223,18 @@ def main() -> None:
                 optimizer.zero_grad(set_to_none=True)
 
                 completed_steps += 1
-                if accelerator.is_main_process and completed_steps % int(cfg["run"].get("log_every", 10)) == 0:
-                    print(
-                        json.dumps(
-                            {
-                                "step": completed_steps,
-                                "loss": float(accelerator.gather(unscaled_loss).mean().cpu()),
-                                "lr": lr_scheduler.get_last_lr()[0],
-                            }
+                if completed_steps % int(cfg["run"].get("log_every", 10)) == 0:
+                    mean_loss = accelerator.gather(unscaled_loss).mean()
+                    if accelerator.is_main_process:
+                        print(
+                            json.dumps(
+                                {
+                                    "step": completed_steps,
+                                    "loss": float(mean_loss.cpu()),
+                                    "lr": lr_scheduler.get_last_lr()[0],
+                                }
+                            )
                         )
-                    )
 
                 if completed_steps % int(cfg["run"].get("eval_every", 100)) == 0:
                     unwrapped = accelerator.unwrap_model(model)
