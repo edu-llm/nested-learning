@@ -5,7 +5,7 @@ This directory is now shaped for both eduLLM paths:
 - Capacity block workflows clone this public Git branch and run commands inside the fixed
   OLMo-core fleet image.
 - The normal platform image path can build `.edullm/Dockerfile` after the repository is
-  registered in `edu-llm/platform`.
+  registered in `edu-llm/platform` and the platform-side IAM/ECR deploys have run.
 
 ## Installed CLI
 
@@ -65,12 +65,23 @@ Settings -> Secrets and variables -> Actions -> Variables
 AWS_ECR_PUBLISHER_ROLE_ARN=<publisher role ARN>
 ```
 
+That repository variable is set on `edu-llm/nested-learning`.
+
 The platform registry also needs an entry for `nested-learning`; otherwise the reusable
-workflow correctly refuses with `unregistered_repository`.
+workflow correctly refuses with `unregistered_repository`. Registration PR:
+
+```text
+https://github.com/edu-llm/platform/pull/448
+```
 
 ## Registration
 
-Once the repo has an `origin`, start the platform registration PR with:
+The automated registration dispatch exposed a platform workflow issue: the job used
+`GITHUB_REPOSITORY_ID` as an environment variable, which collided with the Actions
+runtime's own current-repository id. I pushed the generated registration manually as
+`edu-llm/platform#448`.
+
+For future repositories, the intended command is:
 
 ```bash
 edullm add repository \

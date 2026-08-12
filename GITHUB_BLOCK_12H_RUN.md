@@ -50,9 +50,8 @@ configs/generated_block_12h/*.json
 ## Repository Requirement
 
 `Block: start a run on a node` clones a public repository and branch onto the
-node. Push this experiment directory to a public GitHub branch before dispatch.
-This local folder is not currently a Git repository, so the workflow cannot see
-these files until you publish them somewhere.
+node. This experiment is published at `edu-llm/nested-learning`; use the pushed
+branch below for the 12-hour Block matrix.
 
 Use the current prepared branch:
 
