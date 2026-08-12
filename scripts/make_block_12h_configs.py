@@ -112,6 +112,7 @@ def apply_12h_bounds(
     cfg["data"]["max_length"] = max_length
     cfg["data"]["train_size"] = max(4096, max_steps * 32)
     cfg["adapter"]["rank"] = rank
+    cfg["train"]["ddp_find_unused_parameters"] = True
 
     if cfg["train"]["max_steps"] == 0:
         cfg["run"]["eval_every"] = 1

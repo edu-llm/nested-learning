@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 
 import torch
-from accelerate import Accelerator
+from accelerate import Accelerator, DistributedDataParallelKwargs
 from torch.utils.data import DataLoader
 from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer, get_cosine_schedule_with_warmup, set_seed
 
@@ -32,10 +32,14 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     set_seed(int(cfg["run"]["seed"]))
+    ddp_kwargs = DistributedDataParallelKwargs(
+        find_unused_parameters=bool(cfg["train"].get("ddp_find_unused_parameters", True))
+    )
     accelerator = Accelerator(
         gradient_accumulation_steps=int(cfg["train"]["gradient_accumulation_steps"]),
         mixed_precision=cfg["train"].get("mixed_precision", "bf16"),
         log_with=None,
+        kwargs_handlers=[ddp_kwargs],
     )
 
     tokenizer = AutoTokenizer.from_pretrained(cfg["model"]["name"], trust_remote_code=True)

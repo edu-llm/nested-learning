@@ -62,6 +62,7 @@
     "max_grad_norm": 1.0,
     "mixed_precision": "bf16",
     "gradient_checkpointing": true,
-    "num_workers": 4
+    "num_workers": 4,
+    "ddp_find_unused_parameters": true
   }
 }
